@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_deck/src/configuration/configuration.dart';
 import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_router.dart';
 import 'package:flutter_deck/src/renderers/renderers.dart';
@@ -99,12 +100,20 @@ class _SlidePreview extends StatelessWidget {
                       ),
                     ),
                   )
-                : _SlideContent(
-                    flutterDeck: flutterDeck,
-                    slide: slides[index],
-                    step: step,
-                    autoSizeGroup: autoSizeGroup,
-                  ),
+                : switch (flutterDeck.globalConfiguration.presenter.slidePreview) {
+                    FlutterDeckSlidePreviewMode.image => _SlideContent(
+                      flutterDeck: flutterDeck,
+                      slide: slides[index],
+                      step: step,
+                      autoSizeGroup: autoSizeGroup,
+                    ),
+                    FlutterDeckSlidePreviewMode.live => _LiveSlideContent(
+                      key: ValueKey(slides[index].route),
+                      flutterDeck: flutterDeck,
+                      slide: slides[index],
+                      next: next,
+                    ),
+                  },
           ),
         ),
       ],
@@ -177,6 +186,52 @@ class _SlideContentState extends State<_SlideContent> {
 
         return Image.memory(snapshot.data!, fit: BoxFit.contain, gaplessPlayback: true);
       },
+    );
+  }
+}
+
+/// The slide itself, built live and scaled to fit the preview.
+///
+/// The current slide reads its step from the router, so it follows the
+/// presentation step by step. The next slide stays on its first step.
+class _LiveSlideContent extends StatelessWidget {
+  const _LiveSlideContent({required this.flutterDeck, required this.slide, required this.next, super.key});
+
+  final FlutterDeck flutterDeck;
+  final FlutterDeckRouterSlide slide;
+  final bool next;
+
+  @override
+  Widget build(BuildContext context) {
+    final slideSize = flutterDeck.globalConfiguration.slideSize;
+    final width = MediaQuery.sizeOf(context).width;
+    final logicalSize = slideSize.isResponsive
+        ? Size(width, width * 9 / 16)
+        : Size(slideSize.width!, slideSize.height!);
+    final configuration = slide.configuration.copyWith(
+      controls: const FlutterDeckControlsConfiguration.disabled(),
+      showProgress: false,
+    );
+
+    return ExcludeFocus(
+      child: IgnorePointer(
+        child: ClipRect(
+          child: FittedBox(
+            child: SizedBox.fromSize(
+              size: logicalSize,
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(size: logicalSize),
+                child: flutterDeck
+                    .copyWith(configuration: configuration, stepNumber: next ? 1 : null)
+                    .wrap(
+                      context,
+                      child: FlutterDeckTheme(data: FlutterDeckTheme.of(context), child: slide.widget),
+                    ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

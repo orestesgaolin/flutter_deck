@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_deck/src/configuration/flutter_deck_presenter_configuration.dart';
 import 'package:flutter_deck/src/configuration/flutter_deck_slide_size.dart';
 import 'package:flutter_deck/src/configuration/flutter_deck_template_override_configuration.dart';
 import 'package:flutter_deck/src/controls/controls.dart';
@@ -22,6 +23,7 @@ class FlutterDeckConfiguration {
     this.footer = const FlutterDeckFooterConfiguration(showFooter: false),
     this.header = const FlutterDeckHeaderConfiguration(showHeader: false),
     this.marker = const FlutterDeckMarkerConfiguration(),
+    this.presenter = const FlutterDeckPresenterConfiguration(),
     this.progressIndicator = const FlutterDeckProgressIndicator.solid(),
     this.showProgress = true,
     this.slideSize = const FlutterDeckSlideSize.responsive(),
@@ -64,6 +66,10 @@ class FlutterDeckConfiguration {
   /// The marker configuration for the slide deck.
   final FlutterDeckMarkerConfiguration marker;
 
+  /// The presenter view configuration for the slide deck. By default, the
+  /// presenter view previews slides as images.
+  final FlutterDeckPresenterConfiguration presenter;
+
   /// The progress indicator to show in the slide deck.
   ///
   /// The default is [FlutterDeckProgressIndicator.solid] with a primary color
@@ -101,6 +107,7 @@ class FlutterDeckConfiguration {
     FlutterDeckFooterConfiguration? footer,
     FlutterDeckHeaderConfiguration? header,
     FlutterDeckMarkerConfiguration? marker,
+    FlutterDeckPresenterConfiguration? presenter,
     FlutterDeckProgressIndicator? progressIndicator,
     bool? showProgress,
     FlutterDeckSlideSize? slideSize,
@@ -113,6 +120,7 @@ class FlutterDeckConfiguration {
       footer: footer ?? this.footer,
       header: header ?? this.header,
       marker: marker ?? this.marker,
+      presenter: presenter ?? this.presenter,
       progressIndicator: progressIndicator ?? this.progressIndicator,
       showProgress: showProgress ?? this.showProgress,
       slideSize: slideSize ?? this.slideSize,
@@ -185,6 +193,7 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
     super.controls,
     super.footer,
     super.header,
+    super.presenter,
     super.progressIndicator,
     super.showProgress,
     super.slideSize,
@@ -261,6 +270,7 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
       controls: configuration.controls,
       footer: _footerConfigurationOverride ?? configuration.footer,
       header: _headerConfigurationOverride ?? configuration.header,
+      presenter: configuration.presenter,
       progressIndicator: _progressIndicatorOverride ?? configuration.progressIndicator,
       showProgress: _showProgressOverride ?? configuration.showProgress,
       slideSize: configuration.slideSize,

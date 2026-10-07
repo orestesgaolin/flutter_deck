@@ -1,5 +1,7 @@
 ## NEXT
 
+- feat: live slide previews in the presenter view
+  - Set `FlutterDeckConfiguration.presenter` to `FlutterDeckPresenterConfiguration(slidePreview: FlutterDeckSlidePreviewMode.live)` to build the current and next slide live instead of rendering images. The current slide follows the presentation step by step; the next slide shows its first step. Defaults to `FlutterDeckSlidePreviewMode.image`.
 - feat: support configurable `fit` and `alignment` on `FlutterDeckSlide.image` and `FlutterDeckImageSlide`
   - Defaults to `BoxFit.scaleDown` and `Alignment.center`, preserving the previous behavior.
   - **BREAKING**: `FlutterDeckImageSlideBuilder` (used for `imageSlideBuilder` template overrides) now receives `BoxFit fit` and `AlignmentGeometry alignment` arguments after `label`.
